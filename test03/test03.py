@@ -124,6 +124,9 @@ def task_3_2(csv_stored):
     plt.plot(x, stats.norm.pdf(x, mean, sigma))
     plt.show()
 
+def task_3_3(csv_stored):
+    percentile = stats.norm.ppf(0.95, calculate_mean(isolate_feature_by_index(1, csv_stored)), calculate_variance(isolate_feature_by_index(1, csv_stored)))
+    print(f"TASK 3.3: {percentile}")
 
 with open("../../40437373_features.csv", mode ='r')as file:
           csvFile = csv.reader(file)
@@ -140,8 +143,9 @@ nonliving_objects = find_nonliving_obj(csv_stored)
 ##task 3.1
 # task_3_1(living_objects, nonliving_objects, csv_stored)
 
-
 # #task 3.2
 # task_3_2(csv_stored)
-    
+
+# #task 3.3.
+# task_3_3(csv_stored)
 
