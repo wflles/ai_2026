@@ -1,5 +1,6 @@
 import csv
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 import numpy as np
 
 living_obj = ["cherry", "tree", "banana", "lemon"]
@@ -64,9 +65,48 @@ val.append(isolate_feature_by_index(1, living_objects))
 val.append(isolate_feature_by_index(1, nonliving_objects))
 val.append(isolate_feature_by_index(1, csv_stored))
 
+plt.figure()
+plt.hist(val, bins = 8, density=True, histtype='bar', color=colors, label=names)
+plt.legend(prop={'size': 10})
+plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=50))
+plt.tick_params(axis='x', labelrotation=90) 
+
+#height
+val = []
+
+val.append(isolate_feature_by_index(8, living_objects))
+val.append(isolate_feature_by_index(8, nonliving_objects))
+val.append(isolate_feature_by_index(8, csv_stored))
+
+plt.figure()
 plt.hist(val, bins = 8, density=True, histtype='bar', color=colors, label=names)
 plt.legend(prop={'size': 10})
 plt.tick_params(axis='x', labelrotation=90) 
+
+#width
+
+val = []
+
+val.append(isolate_feature_by_index(9, living_objects))
+val.append(isolate_feature_by_index(9, nonliving_objects))
+val.append(isolate_feature_by_index(9, csv_stored))
+
+plt.figure()
+plt.hist(val, bins = 8, density=True, histtype='bar', color=colors, label=names)
+plt.legend(prop={'size': 10})
+plt.tick_params(axis='x', labelrotation=90) 
+
+#aspect ratio
+
+val = []
+
+val.append(isolate_feature_by_index(10, living_objects))
+val.append(isolate_feature_by_index(10, nonliving_objects))
+val.append(isolate_feature_by_index(10, csv_stored))
+
+plt.figure()
+plt.hist(val, bins = 8, density=True, histtype='bar', color=colors, label=names)
+plt.legend(prop={'size': 10})
+plt.tick_params(axis='x', labelrotation=90) 
+plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=20))
 plt.show()
-
-
