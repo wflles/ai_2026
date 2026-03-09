@@ -1,7 +1,10 @@
 import csv
+from pickle import OBJ
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import numpy as np
+import statistics
+from sklearn.preprocessing import FunctionTransformer
 from scipy import stats
 
 living_obj = ["cherry", "tree", "banana", "lemon"]
@@ -44,7 +47,6 @@ def isolate_feature_by_index(index, obj):
     ret.sort()
 
     return ret
-
 
 def calculate_mean(data):
     sum = 0
@@ -107,8 +109,6 @@ def show_black_px_per_rows(living_objects, nonliving_objects):
     ax2.tick_params(axis='x', labelrotation=90) 
     ax2.set_title("Three or more black pixel per row")
 
-    plt.show()
-
 def show_black_px_per_col(living_objects, non_living_objects):
     colors = ['red', 'tan']
     names = ['living', 'non-living']
@@ -154,7 +154,22 @@ def show_black_px_per_col(living_objects, non_living_objects):
     ax2.tick_params(axis='x', labelrotation=90) 
     ax2.set_title("Three or more black pixel per col")
 
-    plt.show()
+def show_clusters(living_objects, non_living_objects):
+    val = []
+
+    colors = ['red', 'tan']
+    names = ['living', 'non-living']
+
+    fig, axes = plt.subplots(nrows=1, ncols=1)
+    val.append(isolate_feature_by_index(16, living_objects))
+    val.append(isolate_feature_by_index(16, non_living_objects))
+
+    axes.hist(val, bins = 20, density=True, histtype='bar', color=colors, label=names)
+    axes.legend(prop={'size': 10})
+    axes.xaxis.set_major_locator(MaxNLocator(nbins=20))
+    axes.tick_params(axis='x', labelrotation=90) 
+    axes.set_title("Clusters")
+
 
 def show_hollow_eyes_con_areas(living_objects, non_living_objects):
     val = []
@@ -174,7 +189,7 @@ def show_hollow_eyes_con_areas(living_objects, non_living_objects):
     val.append(isolate_feature_by_index(13, living_objects))
     val.append(isolate_feature_by_index(13, nonliving_objects))
 
-    ax0.hist(val, bins = 4, density=True, histtype='bar', color=colors, label=names)
+    ax0.hist(val, bins = 10, density=True, histtype='bar', color=colors, label=names)
     ax0.legend(prop={'size': 10})
     ax0.xaxis.set_major_locator(MaxNLocator(nbins=20))
     ax0.tick_params(axis='x', labelrotation=90) 
@@ -185,7 +200,7 @@ def show_hollow_eyes_con_areas(living_objects, non_living_objects):
     val.append(isolate_feature_by_index(14, living_objects))
     val.append(isolate_feature_by_index(14, nonliving_objects))
 
-    ax1.hist(val, bins = 4, density=True, histtype='bar', color=colors, label=names)
+    ax1.hist(val, bins = 10, density=True, histtype='bar', color=colors, label=names)
     ax1.legend(prop={'size': 10})
     ax1.xaxis.set_major_locator(MaxNLocator(nbins=20))
     ax1.tick_params(axis='x', labelrotation=90) 
@@ -196,13 +211,119 @@ def show_hollow_eyes_con_areas(living_objects, non_living_objects):
     val.append(isolate_feature_by_index(15, living_objects))
     val.append(isolate_feature_by_index(15, nonliving_objects))
 
-    ax2.hist(val, bins = 4, density=True, histtype='bar', color=colors, label=names)
+    ax2.hist(val, bins = 10, density=True, histtype='bar', color=colors, label=names)
     ax2.legend(prop={'size': 10})
     ax2.xaxis.set_major_locator(MaxNLocator(nbins=20))
     ax2.tick_params(axis='x', labelrotation=90) 
     ax2.set_title("Hollowness")
 
-    plt.show()
+def get_all_means(objects):
+    val = []
+    for row in objects:
+        val.append(mean(row))
+    return val
+
+def get_all_range(objects):
+    val = []
+    for row in objects:
+        val.append(rnge(row))
+    return val
+
+def get_all_median(objects):
+    val = []
+    for row in objects:
+        val.append(median(row))
+    return val
+
+def get_all_mode(objects):
+    val = []
+    for row in objects:
+        val.append(mode(row))
+    return val
+
+def calculate_measures(type, objRef, object):
+    if(all_equal_zero(object)):
+        print(f"OBJECT: {objRef} all return 0 -- cannot calculate measures\n")
+    else:
+        mean = 0
+        median = 0
+        rnge = 0
+        mode = 0
+
+        # mean
+        for i in object:
+            mean = mean + i
+        mean = mean / len(object)
+
+        #median
+        median = statistics.median(object)
+
+        #range
+        min_val = 0
+        max_val = 0
+        for i in object:
+            if(min_val > i):
+                min_val = i
+            if(max_val < i):
+                max_val = i
+        rnge = max_val - min_val
+
+        #mode
+        mode = statistics.mode(object)
+
+        #print out 
+        print(f"OBJECT({type}): {objRef}")
+        print(f"MEAN: {mean}")
+        print(f"MODE: {mode}")
+        print(f"RANGE: {rnge}")
+        print(f"MEDIAN: {median}\n")
+
+def median(object):
+    if(all_equal_zero(object)):
+        print("cannot calculate")
+        return 0
+    else:
+        median = statistics.median(object)
+        return median
+
+def mode(object):
+    if(all_equal_zero(object)):
+        print("cannot calculate")
+        return 0
+    else:
+          mode = statistics.mode(object)
+          return mode
+
+def rnge(object):
+    if(all_equal_zero(object)):
+        print("cannot calculate")
+        return 0
+    else:
+        min_val = 0
+        max_val = 0
+        for i in object:
+                if(min_val > i):
+                    min_val = i
+                if(max_val < i):
+                    max_val = i
+        rnge = min_val - max_val
+        return rnge;
+
+def mean(object):
+    if(all_equal_zero(object)):
+        print("cannot calculate")
+        return 0
+    else:
+        for i in object:
+                mean = mean + i
+        mean = mean / len(object)
+        return mean
+
+def all_equal_zero(object):
+    for i in object:
+        if(i > 0):
+            return False
+    return True
 
 def task_3_1(living_objects, nonliving_objects, csv_stored):
 
@@ -260,7 +381,6 @@ def task_3_1(living_objects, nonliving_objects, csv_stored):
     plt.legend(prop={'size': 10})
     plt.tick_params(axis='x', labelrotation=90) 
     plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=20))
-    plt.show()
 
 def task_3_2(csv_stored):
     variance = calculate_variance(isolate_feature_by_index(1, csv_stored))
@@ -269,21 +389,55 @@ def task_3_2(csv_stored):
     sigma = np.sqrt(variance)
     x = np.linspace(mean - 3*sigma, mean + 3*sigma, 100)
     plt.plot(x, stats.norm.pdf(x, mean, sigma))
-    plt.show()
 
 def task_3_3(csv_stored):
     percentile = stats.norm.ppf(0.95, calculate_mean(isolate_feature_by_index(1, csv_stored)), calculate_variance(isolate_feature_by_index(1, csv_stored)))
     print(f"TASK 3.3: {percentile}")
 
+def t_test(num, object1, object2):
+    if(all_equal_zero(object1) | (all_equal_zero(object2))):
+         print(f"OBJECT{num} has no data\n")
+    else:
+        log_data1 = np.log1p(object1)
+        log_data2 = np.log1p(object2)
+
+        t_stat, p_value = stats.ttest_ind(log_data1, log_data2)
+
+        r_t_stat = round(t_stat, 3)
+        r_p_value = round(p_value, 3)
+
+        print(f"LIVING AGAISNT NONLIVING\nREF{num} has:")
+        print(f"T: {r_t_stat}")
+        print(f"P: {r_p_value}")
+
+        if(r_p_value >= 0.05):
+            print(f"NULL HYPOTHESIS PROVEN IN REF{num}\n")
+        else:
+            print(f"FAIL TO REJECT NULL HYPOTHESIS IN REF{num}\n")
+
+
 def task_3_4(csv_stored, living_objects, nonliving_objects):
 
-    #barcharts for pix
+    #barcharts for normal values
     show_black_px_per_rows(living_objects, nonliving_objects)
-    show_black_px_per_rows(living_objects, nonliving_objects)
+    show_black_px_per_col(living_objects, nonliving_objects)
     show_hollow_eyes_con_areas(living_objects, nonliving_objects)
+    show_clusters(living_objects, nonliving_objects)
 
-def myfunc(x):
-  return slope * x + intercept
+    # #print out written version of staistical values
+    len_b = 16
+    for j in range(len_b):
+            calculate_measures("living", j + 1, isolate_feature_by_index(j + 1, living_objects))
+            calculate_measures("non-living", j + 1, isolate_feature_by_index(j + 1, nonliving_objects)) 
+
+    #t-tests
+    len_b = 16
+    for j in range(len_b):
+                t_test(j+1, isolate_feature_by_index(j + 1, living_objects), isolate_feature_by_index(j + 1, nonliving_objects)) 
+
+
+# def myfunc(x):
+#   return slope * x + intercept
 
 with open("../../40437373_features.csv", mode ='r')as file:
           csvFile = csv.reader(file)
@@ -306,21 +460,25 @@ nonliving_objects = find_nonliving_obj(csv_stored)
 # #task 3.3.
 # task_3_3(csv_stored)
 
-#task 3.4(living_objects, nonliving_objects)
+# task_3_4(csv_stored, living_objects, nonliving_objects)
 
-len = 14
-for i in range(len):
-    for j in range(len):
-        x = isolate_feature_by_index(i, nonliving_objects)
-        y = isolate_feature_by_index(j, nonliving_objects)
-        if(x == y):
-            break
-        try:
-            slope, intercept, r, p, std_err = stats.linregress(x, y)
-        except:
-            print("unable to calculate: " + str(i) + " + " + str(j))
-            break
-        print("r value of {" + str(i + 1) + "-" + str(j + 1) + "} = " + str(r))
+# task 3_5
+# PEARSONS COEFFICENT!!!!
+
+plt.show();
+# len = 14
+# for i in range(len):
+#     for j in range(len):
+#         x = isolate_feature_by_index(i, nonliving_objects)
+#         y = isolate_feature_by_index(j, nonliving_objects)
+#         if(x == y):
+#             break
+#         try:
+#             slope, intercept, r, p, std_err = stats.linregress(x, y)
+#         except:
+#             print("unable to calculate: " + str(i) + " + " + str(j))
+#             break
+#         print("r value of {" + str(i + 1) + "-" + str(j + 1) + "} = " + str(r))
         
 
 
