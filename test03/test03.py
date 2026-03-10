@@ -1,10 +1,12 @@
 import csv
 from pickle import OBJ
+from matplotlib.pylab import f
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 import numpy as np
 import statistics
 from sklearn.preprocessing import FunctionTransformer
+from sklearn.metrics import r2_score
 from scipy import stats
 
 living_obj = ["cherry", "tree", "banana", "lemon"]
@@ -435,9 +437,80 @@ def task_3_4(csv_stored, living_objects, nonliving_objects):
     for j in range(len_b):
                 t_test(j+1, isolate_feature_by_index(j + 1, living_objects), isolate_feature_by_index(j + 1, nonliving_objects)) 
 
+def y_intercept(slope, intercept, x):
+  return slope * x + intercept
+                
+def calculate_line_correlation(type, num1, num2, obj1, obj2):
+    if(num1 == num2):
+        print(f"SKIP (EXPERIMENT {num1} == {num2})\n")
+        return 0, 0
+    else:
+        slope, intercept, r_value, p_value, std_err = stats.linregress(obj1,obj2)
+        r_squared = r_value**2
+    
+        print(f"EXPERIMENT ({type}) {num1} + {num2}:")
+        print(f"R_VALUE: {r_value}")
+        print(f"R2_VALUE: {r_squared}")
+        print(f"P_VALUE: {round(p_value, 2)}\n")
 
-# def myfunc(x):
-#   return slope * x + intercept
+        model = list(map(lambda x: plot_y(x, slope, intercept), obj1))
+
+        plt.scatter(obj1, obj2, color = 'blue')
+        plt.xlabel(num1)
+        plt.ylabel(num2)
+        plt.title(f"Graph: {type} ( {num1}|{num2} )")
+        plt.plot(obj1, model)
+        plt.show()
+        return r_value, r_squared
+
+def plot_y(obj, slope, intercept):
+    return slope * obj + intercept
+
+def task_3_5(living_objects, nonliving_objects):
+    #1, 8, 9, 10, 15
+    val = [1, 8, 9, 10, 15]
+    #[0] = val, [1] = x, [2] = y
+    highest_r = [0, 0, 0]
+    highest_r_squared = [0, 0, 0]
+
+    #living objects
+    for i in val:
+        for j in val:
+            temp_0, temp_1 = calculate_line_correlation("living", i, j, isolate_feature_by_index(i, living_objects), isolate_feature_by_index(j, living_objects))
+            if(temp_0 > highest_r):
+                highest_r[0] = temp_0
+                highest_r[1] = i
+                highest_r[2] = j
+            if(temp_0 > highest_r_squared):
+                highest_r_squared[0] = temp_1
+                highest_r_squared[1] = i
+                highest_r_squared[2] = j
+
+    print(f"HIGHEST (living) R EXPERIMENT{highest_r[1]}{highest_r[2]}:")
+    print(f"R: {highest_r[0]}\n")
+
+    print(f"HIGHEST (living) R2 EXPERIMENT{highest_r_squared[1]}{highest_r_squared[2]}:")
+    print(f"R: {highest_r_squared[0]}\n")
+
+    #nonliving objects
+    for i in val:
+        for j in val:
+            temp_0, temp_1 = calculate_line_correlation("non-living", i, j, isolate_feature_by_index(i, nonliving_objects), isolate_feature_by_index(j, nonliving_objects))
+            if(temp_0 > highest_r):
+                highest_r[0] = temp_0
+                highest_r[1] = i
+                highest_r[2] = j
+            if(temp_0 > highest_r_squared):
+                highest_r_squared[0] = temp_1
+                highest_r_squared[1] = i
+                highest_r_squared[2] = j
+
+    print(f"HIGHEST (living) R EXPERIMENT{highest_r[1]}{highest_r[2]}:")
+    print(f"R: {highest_r[0]}\n")
+
+    print(f"HIGHEST (living) R2 EXPERIMENT{highest_r_squared[1]}{highest_r_squared[2]}:")
+    print(f"R: {highest_r_squared[0]}\n")
+
 
 with open("../../40437373_features.csv", mode ='r')as file:
           csvFile = csv.reader(file)
@@ -451,8 +524,8 @@ with open("../../40437373_features.csv", mode ='r')as file:
 living_objects = find_living_obj(csv_stored)
 nonliving_objects = find_nonliving_obj(csv_stored)
 
-##task 3.1
-# task_3_1(living_objects, nonliving_objects, csv_stored)
+#task 3.1
+task_3_1(living_objects, nonliving_objects, csv_stored)
 
 # #task 3.2
 # task_3_2(csv_stored)
@@ -460,29 +533,14 @@ nonliving_objects = find_nonliving_obj(csv_stored)
 # #task 3.3.
 # task_3_3(csv_stored)
 
+# # task 3_4
 # task_3_4(csv_stored, living_objects, nonliving_objects)
 
-# task 3_5
-# PEARSONS COEFFICENT!!!!
+# # task 3_5
+# task_3_5(living_objects, nonliving_objects)
+
 
 plt.show();
-# len = 14
-# for i in range(len):
-#     for j in range(len):
-#         x = isolate_feature_by_index(i, nonliving_objects)
-#         y = isolate_feature_by_index(j, nonliving_objects)
-#         if(x == y):
-#             break
-#         try:
-#             slope, intercept, r, p, std_err = stats.linregress(x, y)
-#         except:
-#             print("unable to calculate: " + str(i) + " + " + str(j))
-#             break
-#         print("r value of {" + str(i + 1) + "-" + str(j + 1) + "} = " + str(r))
-        
-
-
-
 
 
 # mymodel = list(map(myfunc, x))
